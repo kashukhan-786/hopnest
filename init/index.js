@@ -55,7 +55,8 @@ import Listing from "../models/listing.js";
 import { data } from "./data.js";
 
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/hopnest");
+  // await mongoose.connect("mongodb://127.0.0.1:27017/hopnest");
+  await mongoose.connect(process.env.ATLASDB_URL);
   console.log("connected to db");
 }
 
