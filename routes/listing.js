@@ -95,7 +95,7 @@ router
   .get(wrapAsync(ListingController.showListing))
   .put(
     isLoggedIn,
-    isOwner,
+
     upload.single("listing[image]"),
     validateListing,
     wrapAsync(ListingController.updateListing)
@@ -105,7 +105,7 @@ router
 router.get(
   "/:id/edit",
   isLoggedIn,
-  isOwner,
+
   wrapAsync(ListingController.renderEditForm)
 );
 

@@ -31,7 +31,7 @@
     </div>
   </div>
 
-  <!-- EDIT / DELETE -->
+  <!-- EDIT / DELETE
   <% if (currUser && listing.owner && currUser._id.toString() ===
   listing.owner._id.toString()) { %>
   <div class="btns">
@@ -45,7 +45,19 @@
       <button class="btn btn-dark offset-5">Delete</button>
     </form>
   </div>
-  <% } %>
+  <% } %> -->
+  <div class="btns">
+    <a
+      href="/listings/<%= listing._id %>/edit"
+      class="btn btn-dark col-1 offset-3 edit-btn"
+    >
+      Edit
+    </a>
+
+    <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+      <button class="btn btn-dark offset-5">Delete</button>
+    </form>
+  </div>
 
   <!-- REVIEW FORM -->
   <div class="col-8 offset-3">
