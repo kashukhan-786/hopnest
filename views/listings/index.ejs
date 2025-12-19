@@ -269,10 +269,10 @@
     window.location.href = url;
   }
 
-  let taxSwitch = document.getElementById("switchCheckDefault");
+  const taxSwitch = document.getElementById("switchCheckDefault");
   if (taxSwitch) {
     taxSwitch.addEventListener("change", () => {
-      let taxInfo = document.getElementsByClassName("tax-info");
+      const taxInfo = document.getElementsByClassName("tax-info");
       for (let info of taxInfo) {
         info.style.display = taxSwitch.checked ? "inline" : "none";
       }
@@ -280,7 +280,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    let taxInfo = document.getElementsByClassName("tax-info");
+    const taxInfo = document.getElementsByClassName("tax-info");
     for (let info of taxInfo) {
       info.style.display = taxSwitch && taxSwitch.checked ? "inline" : "none";
     }

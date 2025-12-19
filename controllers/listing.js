@@ -87,21 +87,38 @@ const MAP_TOKEN = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocodeing({ accessToken: MAP_TOKEN });
 
 // INDEX ROUTE (with search + category + price filters)
+// module.exports.index = async (req, res) => {
+// const { category, search, minPrice, maxPrice } = req.query;
+
+// let filter = {};
+
+// // CATEGORY FILTER
+// if (category && category !== "all") {
+//   filter.category = category;
+// }
+
+// // SEARCH FILTER (title + location)
+// if (search) {
+//   filter.$or = [
+//     { title: { $regex: search, $options: "i" } },
+//     { location: { $regex: search, $options: "i" } },
+//   ];
+// }
 module.exports.index = async (req, res) => {
-  const { category, search, minPrice, maxPrice } = req.query;
+  const { category, location, minPrice, maxPrice } = req.query;
 
   let filter = {};
 
   // CATEGORY FILTER
   if (category && category !== "all") {
-    filter.category = category;
+    filter.category = new RegExp(`^${category}$`, "i");
   }
 
-  // SEARCH FILTER (title + location)
-  if (search) {
+  // LOCATION / SEARCH FILTER (FIXED)
+  if (location) {
     filter.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { location: { $regex: search, $options: "i" } },
+      { title: { $regex: location, $options: "i" } },
+      { location: { $regex: location, $options: "i" } },
     ];
   }
 
