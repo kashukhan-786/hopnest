@@ -192,18 +192,30 @@
   </a>
   <% } %>
 </div>
-<script>
+<!-- <script>
+  // function applyFilter(category) {
+  //   const searchInput = document.querySelector(".search-inp");
+  //   const search = searchInput ? searchInput.value.trim() : "";
+
+  //   // Build URL
+  //   let newUrl = `/listings?category=${encodeURIComponent(category)}`;
+  //   if (search) {
+  //     newUrl += `&location=${encodeURIComponent(search)}`;
+  //   }
+
+  //   window.location.href = newUrl;
+  // }
   function applyFilter(category) {
     const searchInput = document.querySelector(".search-inp");
     const search = searchInput ? searchInput.value.trim() : "";
 
-    // Build URL
-    let newUrl = `/listings?category=${encodeURIComponent(category)}`;
+    let url = `/listings?category=${encodeURIComponent(category)}`;
+
     if (search) {
-      newUrl += `&location=${encodeURIComponent(search)}`;
+      url += `&location=${encodeURIComponent(search)}`;
     }
 
-    window.location.href = newUrl;
+    window.location.href = url;
   }
 
   // TAX TOGGLE FUNCTION
@@ -225,12 +237,63 @@
   });
 
   // PRESS ENTER SEARCH EVENT
+  // const searchInput = document.querySelector(".search-inp");
+  // searchInput.addEventListener("keypress", (e) => {
+  //   if (e.key === "Enter") {
+  //     window.location.href = `/listings?location=${encodeURIComponent(
+  //       searchInput.value.trim()
+  //     )}`;
+  //   }
+  // });
   const searchInput = document.querySelector(".search-inp");
-  searchInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      window.location.href = `/listings?location=${encodeURIComponent(
-        searchInput.value.trim()
-      )}`;
+  if (searchInput) {
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        window.location.href = `/listings?location=${encodeURIComponent(
+          searchInput.value.trim()
+        )}`;
+      }
+    });
+  }
+</script> -->
+<script>
+  function applyFilter(category) {
+    const searchInput = document.querySelector(".search-inp");
+    const search = searchInput ? searchInput.value.trim() : "";
+
+    let url = `/listings?category=${encodeURIComponent(category)}`;
+    if (search) {
+      url += `&location=${encodeURIComponent(search)}`;
+    }
+
+    window.location.href = url;
+  }
+
+  let taxSwitch = document.getElementById("switchCheckDefault");
+  if (taxSwitch) {
+    taxSwitch.addEventListener("change", () => {
+      let taxInfo = document.getElementsByClassName("tax-info");
+      for (let info of taxInfo) {
+        info.style.display = taxSwitch.checked ? "inline" : "none";
+      }
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    let taxInfo = document.getElementsByClassName("tax-info");
+    for (let info of taxInfo) {
+      info.style.display = taxSwitch && taxSwitch.checked ? "inline" : "none";
     }
   });
+
+  const searchInput = document.querySelector(".search-inp");
+  if (searchInput) {
+    searchInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        window.location.href = `/listings?location=${encodeURIComponent(
+          searchInput.value.trim()
+        )}`;
+      }
+    });
+  }
 </script>
