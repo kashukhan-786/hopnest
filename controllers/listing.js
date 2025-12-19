@@ -4,42 +4,33 @@ const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const MAP_TOKEN = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: MAP_TOKEN });
 
-/* =========================
-   INDEX ROUTE (FILTERS)
-========================= */
 module.exports.index = async (req, res) => {
-  const { category, location, minPrice, maxPrice } = req.query;
+  const { category, location, search, minPrice, maxPrice } = req.query;
 
-  let conditions = [];
+  let filter = {};
 
   // CATEGORY FILTER
   if (category && category !== "all") {
-    conditions.push({ category });
+    filter.category = new RegExp(`^${category}$`, "i");
   }
 
-  // LOCATION / SEARCH FILTER
-  if (location && location.trim() !== "") {
-    conditions.push({
-      $or: [
-        { title: { $regex: location, $options: "i" } },
-        { location: { $regex: location, $options: "i" } },
-      ],
-    });
+  // SEARCH / LOCATION FILTER
+  const searchTerm = search || location;
+  if (searchTerm && searchTerm.trim() !== "") {
+    filter.$or = [
+      { title: { $regex: searchTerm, $options: "i" } },
+      { location: { $regex: searchTerm, $options: "i" } },
+    ];
   }
 
   // PRICE FILTER
   if (minPrice || maxPrice) {
-    let priceFilter = {};
-    if (minPrice) priceFilter.$gte = Number(minPrice);
-    if (maxPrice) priceFilter.$lte = Number(maxPrice);
-    conditions.push({ price: priceFilter });
+    filter.price = {};
+    if (minPrice) filter.price.$gte = Number(minPrice);
+    if (maxPrice) filter.price.$lte = Number(maxPrice);
   }
 
-  // FINAL FILTER OBJECT
-  const filter = conditions.length ? { $and: conditions } : {};
-
   const allListings = await Listing.find(filter);
-
   res.render("listings/index", {
     allListings,
     selectedCategory: category || "all",
