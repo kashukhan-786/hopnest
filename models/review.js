@@ -1,6 +1,9 @@
-const { types } = require("joi");
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+// const { types } = require("joi");
+// const mongoose = require("mongoose");
+// const Schema = mongoose.Schema;
+import mongoose from "mongoose";
+
+const { Schema } = mongoose;
 
 const reviewSchema = new Schema({
   comment: {
@@ -23,4 +26,7 @@ const reviewSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("Review", reviewSchema);
+// module.exports = mongoose.model("Review", reviewSchema);
+const Review = mongoose.models.Review || mongoose.model("Review", reviewSchema);
+
+export default Review;
