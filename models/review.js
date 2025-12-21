@@ -1,9 +1,5 @@
-// const { types } = require("joi");
-// const mongoose = require("mongoose");
-// const Schema = mongoose.Schema;
-import mongoose from "mongoose";
-
-const { Schema } = mongoose;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const reviewSchema = new Schema({
   comment: {
@@ -26,7 +22,7 @@ const reviewSchema = new Schema({
   },
 });
 
-// module.exports = mongoose.model("Review", reviewSchema);
+// Prevent model overwrite error in dev
 const Review = mongoose.models.Review || mongoose.model("Review", reviewSchema);
 
-export default Review;
+module.exports = Review;
