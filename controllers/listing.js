@@ -11,10 +11,7 @@ module.exports.index = async (req, res) => {
 
   // CATEGORY FILTER
   if (category && category !== "all") {
-    filter.category = {
-      $regex: `^\\s*${category}\\s*$`,
-      $options: "i",
-    };
+    filter.category = category.toLowerCase();
   }
 
   // SEARCH / LOCATION FILTER
