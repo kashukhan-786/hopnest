@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import Review from "./review.js";
+const mongoose = require("mongoose");
+const Review = require("./review.js");
 
 const { Schema } = mongoose;
 
@@ -19,6 +19,12 @@ const listingSchema = new Schema({
   location: String,
   country: String,
 
+  category: {
+    type: String,
+    lowercase: true,
+    trim: true,
+  },
+
   reviews: [
     {
       type: Schema.Types.ObjectId,
@@ -27,9 +33,9 @@ const listingSchema = new Schema({
   ],
 });
 
-// Delete all reviews when listing is deleted
-listingSchema.post("findOneAndDelete", async (listing) => {
-  if (listing) {
+// 🔥 Delete all reviews when listing is deleted
+listingSchema.post("findOneAndDelete", async function (listing) {
+  if (listing && listing.reviews.length) {
     await Review.deleteMany({ _id: { $in: listing.reviews } });
   }
 });
@@ -37,4 +43,4 @@ listingSchema.post("findOneAndDelete", async (listing) => {
 const Listing =
   mongoose.models.Listing || mongoose.model("Listing", listingSchema);
 
-export default Listing;
+module.exports = Listing;
