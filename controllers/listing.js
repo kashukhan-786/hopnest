@@ -11,7 +11,10 @@ module.exports.index = async (req, res) => {
 
   // CATEGORY FILTER
   if (category && category !== "all") {
-    filter.category = new RegExp(`^${category}$`, "i");
+    filter.category = {
+      $regex: `^\\s*${category}\\s*$`,
+      $options: "i",
+    };
   }
 
   // SEARCH / LOCATION FILTER
@@ -81,6 +84,8 @@ module.exports.createListing = async (req, res) => {
     .send();
 
   const newListing = new Listing(req.body.listing);
+  newListing.category = newListing.category.trim().toLowerCase();
+
   newListing.owner = req.user._id;
   newListing.image = {
     url: req.file.path,
@@ -119,6 +124,10 @@ module.exports.renderEditForm = async (req, res) => {
 ========================= */
 module.exports.updateListing = async (req, res) => {
   const { id } = req.params;
+
+  if (req.body.listing.category) {
+    req.body.listing.category = req.body.listing.category.trim().toLowerCase();
+  }
 
   const listing = await Listing.findByIdAndUpdate(id, {
     ...req.body.listing,
