@@ -23,11 +23,13 @@ const userRouter = require("./routes/user.js");
 const updateCategoriesRoute = require("./routes/updateCategories");
 
 const db_URL = process.env.ATLASDB_URL;
+const { data } = require("./data.js"); // ← If you get "Cannot find module" error later, change the path to where your data.js actually is (example: "./seeds/data.js" or "./init/data.js")
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
+
 app.use(express.static(path.join(__dirname, "/public")));
 
 const store = MongoStore.create({
@@ -90,6 +92,31 @@ app.get("/", (req, res) => {
 app.use("/api", updateCategoriesRoute); // <= change this
 app.use("/", userRouter);
 app.use("/listings", listingsRouter);
+// ===================== TEMPORARY SEED ROUTE =====================
+// DELETE THIS WHOLE BLOCK AFTER USE (for security)
+app.get("/seed", async (req, res) => {
+  try {
+    await Listing.deleteMany({});
+    console.log("✅ All old listings deleted");
+
+    await Listing.insertMany(data);
+    console.log(`✅ ${data.length} new listings inserted successfully`);
+
+    res.send(`
+      <h1 style="color:green; text-align:center; margin-top:50px;">
+        ✅ SUCCESS!
+      </h1>
+      <p style="text-align:center; font-size:18px;">
+        All old listings deleted and ${data.length} new listings added.<br><br>
+        <a href="/listings" style="font-size:20px;">→ Go to Listings Page</a>
+      </p>
+    `);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("❌ Error: " + err.message);
+  }
+});
+// ===================== END OF SEED ROUTE =====================
 app.use("/listings/:id/reviews", reviewsRouter);
 
 app.all("*", (req, res, next) => {
