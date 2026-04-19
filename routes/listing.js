@@ -47,5 +47,9 @@ router.get(
   isLoggedIn, // login required
   wrapAsync(ListingController.renderEditForm)
 );
-
+// Temporary route - Add this above module.exports = router;
+router.get("/check-categories", async (req, res) => {
+  const categories = await Listing.distinct("category");
+  res.json({ categories });
+});
 module.exports = router;
