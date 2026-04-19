@@ -4,39 +4,76 @@ const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const MAP_TOKEN = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: MAP_TOKEN });
 
+// module.exports.index = async (req, res) => {
+//   const { category, location, search, minPrice, maxPrice } = req.query;
+
+//   let filter = {};
+
+//   // CATEGORY FILTER
+//   if (category && category !== "all") {
+//     filter.category = category.toLowerCase();
+//   }
+
+//   // SEARCH / LOCATION FILTER
+//   const searchTerm = search || location;
+//   if (searchTerm && searchTerm.trim() !== "") {
+//     filter.$or = [
+//       { title: { $regex: searchTerm, $options: "i" } },
+//       { location: { $regex: searchTerm, $options: "i" } },
+//     ];
+//   }
+
+//   // PRICE FILTER
+//   if (minPrice || maxPrice) {
+//     filter.price = {};
+//     if (minPrice) filter.price.$gte = Number(minPrice);
+//     if (maxPrice) filter.price.$lte = Number(maxPrice);
+//   }
+
+//   const allListings = await Listing.find(filter);
+//   res.render("listings/index", {
+//     allListings,
+//     selectedCategory: category || "all",
+//   });
+// };
 module.exports.index = async (req, res) => {
   const { category, location, search, minPrice, maxPrice } = req.query;
 
   let filter = {};
 
-  // CATEGORY FILTER
+  // ================== CATEGORY FILTER ==================
   if (category && category !== "all") {
     filter.category = category.toLowerCase();
   }
 
-  // SEARCH / LOCATION FILTER
+  // ================== SEARCH FILTER (Improved) ==================
   const searchTerm = search || location;
+  
   if (searchTerm && searchTerm.trim() !== "") {
+    const term = searchTerm.trim();
+    
     filter.$or = [
-      { title: { $regex: searchTerm, $options: "i" } },
-      { location: { $regex: searchTerm, $options: "i" } },
+      { title:       { $regex: term, $options: "i" } },     // case-insensitive
+      { location:    { $regex: term, $options: "i" } },     // case-insensitive
+      { description: { $regex: term, $options: "i" } },     // ← Added description
+      { category:    { $regex: term, $options: "i" } }      // ← Added category
     ];
   }
 
-  // PRICE FILTER
+  // ================== PRICE FILTER ==================
   if (minPrice || maxPrice) {
     filter.price = {};
     if (minPrice) filter.price.$gte = Number(minPrice);
     if (maxPrice) filter.price.$lte = Number(maxPrice);
   }
 
-  const allListings = await Listing.find(filter);
+  const allListings = await Listing.find(filter).sort({ createdAt: -1 });
+
   res.render("listings/index", {
     allListings,
     selectedCategory: category || "all",
   });
 };
-
 /* =========================
    NEW FORM
 ========================= */
