@@ -47,9 +47,29 @@ router.get(
   isLoggedIn, // login required
   wrapAsync(ListingController.renderEditForm)
 );
-// Temporary route - Add this above module.exports = router;
+// ===================== TEMPORARY - CHECK CATEGORIES =====================
 router.get("/check-categories", async (req, res) => {
-  const categories = await Listing.distinct("category");
-  res.json({ categories });
+  try {
+    const categories = await Listing.distinct("category");
+    const totalListings = await Listing.countDocuments();
+
+    let html = `
+      <h2 style="color:green; text-align:center; margin:40px 0 20px;">
+        Total Listings in Database: ${totalListings}
+      </h2>
+      <h3 style="text-align:center;">Stored Categories:</h3>
+      <pre style="background:#f8f9fa; padding:20px; font-size:16px; margin:20px auto; max-width:600px; border:1px solid #ddd;">
+${JSON.stringify(categories, null, 2) || "No categories found"}
+      </pre>
+      <p style="text-align:center;">
+        <a href="/listings" style="font-size:18px;">← Back to Listings Page</a>
+      </p>
+    `;
+
+    res.send(html);
+  } catch (err) {
+    res.status(500).send("Error: " + err.message);
+  }
 });
+// ===================== END TEMPORARY ROUTE =====================
 module.exports = router;
