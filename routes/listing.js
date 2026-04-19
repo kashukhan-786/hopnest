@@ -47,29 +47,23 @@ router.get(
   isLoggedIn, // login required
   wrapAsync(ListingController.renderEditForm)
 );
-// ===================== TEMPORARY - CHECK CATEGORIES =====================
+// ===================== TEMPORARY ROUTE - CHECK CATEGORIES =====================
 router.get("/check-categories", async (req, res) => {
   try {
+    const total = await Listing.countDocuments();
     const categories = await Listing.distinct("category");
-    const totalListings = await Listing.countDocuments();
 
-    let html = `
-      <h2 style="color:green; text-align:center; margin:40px 0 20px;">
-        Total Listings in Database: ${totalListings}
-      </h2>
-      <h3 style="text-align:center;">Stored Categories:</h3>
-      <pre style="background:#f8f9fa; padding:20px; font-size:16px; margin:20px auto; max-width:600px; border:1px solid #ddd;">
-${JSON.stringify(categories, null, 2) || "No categories found"}
-      </pre>
-      <p style="text-align:center;">
-        <a href="/listings" style="font-size:18px;">← Back to Listings Page</a>
-      </p>
-    `;
+    let output = `<h2 style="color:green;text-align:center;margin:30px;">Total Listings: ${total}</h2>`;
+    output += `<h3 style="text-align:center;">Stored Categories in DB:</h3>`;
+    output += `<pre style="background:#f4f4f4;padding:20px;font-size:15px;max-width:700px;margin:20px auto;border:1px solid #ccc;">`;
+    output += JSON.stringify(categories, null, 2) || "[] (No categories found)";
+    output += `</pre>`;
+    output += `<p style="text-align:center;"><a href="/listings">← Back to Listings</a></p>`;
 
-    res.send(html);
+    res.send(output);
   } catch (err) {
-    res.status(500).send("Error: " + err.message);
+    res.send("Error: " + err.message);
   }
 });
-// ===================== END TEMPORARY ROUTE =====================
+// ===================== END TEMPORARY =====================
 module.exports = router;
